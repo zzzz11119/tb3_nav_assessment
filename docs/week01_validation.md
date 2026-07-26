@@ -71,7 +71,22 @@ ros2 launch tb3_nav_assessment simulation.launch.py
 
 其中 `x > 0`，证明机器人已通过中央通道进入东区。
 
-## 5. 当前结论
+## 5. 干净重建验证
+
+删除工作空间中的 `build/`、`install/` 和 `log/` 后，仅保留 `src/` 源代码，并重新执行构建。
+
+验证结果：
+
+- `tb3_nav_assessment` 从零构建成功
+- launch、world 和验证文档均重新安装到 install-space
+- 新生成的 overlay 能正确识别 package
+- `simulation.launch.py` 能从新 install-space 正常启动
+- 自建场景完整加载
+- TurtleBot3 成功生成并发布激光雷达数据
+
+这证明项目不依赖旧构建缓存，可以仅通过源代码重新构建和运行。
+
+## 6. 当前结论
 
 第一周仿真基础功能验证通过：
 
@@ -80,9 +95,9 @@ ros2 launch tb3_nav_assessment simulation.launch.py
 - 自建 world 的结构、碰撞和障碍物有效
 - 集成启动文件可正常启动完整场景
 - 机器人可通过 teleop 遍历全部设计区域
+- 删除构建产物后仍可完整重建和启动
 
-## 6. 后续事项
+## 7. 后续事项
 
-- 完成删除构建产物后的干净重建测试
 - 整理关键截图和运行日志
 - 在网络恢复后将本地提交推送到 GitHub
