@@ -63,4 +63,4 @@ ros2 launch tb3_nav_assessment simulation.launch.py
 - [x] 集成 TurtleBot3 启动文件
 - [x] 完成传感器、碰撞和全区域 teleop 验证
 - [x] 完成干净重建验证
-- [ ] 上传本地提交到 GitHub
+- [x] 上传本地提交到 GitHub
