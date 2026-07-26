@@ -3,11 +3,16 @@
 <package format="3">
   <name>tb3_nav_assessment</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="zz@todo.todo">zz</maintainer>
+  <description>TurtleBot3 autonomous navigation assessment for ROS2 Humble.</description>
+  <maintainer email="ZZRorczr@tongji.edu.cn">zz</maintainer>
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>turtlebot3_gazebo</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
