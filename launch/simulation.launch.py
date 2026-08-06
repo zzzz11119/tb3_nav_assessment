@@ -22,8 +22,8 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     x_pose = LaunchConfiguration('x_pose')
     y_pose = LaunchConfiguration('y_pose')
-
-    world_path = os.path.join(
+    world = LaunchConfiguration('world')
+    default_world_path = os.path.join(
         assessment_share,
         'worlds',
         'assessment_world.world',
@@ -38,7 +38,7 @@ def generate_launch_description():
             )
         ),
         launch_arguments={
-            'world': world_path,
+            'world': world,
         }.items(),
     )
 
@@ -80,6 +80,11 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'world',
+            default_value=default_world_path,
+            description='Absolute path to the Gazebo world file.',
+        ),
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='true',
