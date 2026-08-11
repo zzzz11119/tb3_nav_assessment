@@ -1,0 +1,24 @@
+waypoint_navigator:
+  ros__parameters:
+    use_sim_time: true
+    waypoint_names:
+      - point_a
+      - point_b
+      - point_c
+
+    waypoint_x:
+      - -3.8187427520751953
+      - 1.8462358713150024
+      - 4.515355587005615
+
+    waypoint_y:
+      - 0.5291023254394531
+      - -1.4826905727386475
+      - 1.0588133335113525
+
+    waypoint_yaw:
+      - 0.0
+      - 0.0
+      - 0.0
+
+    continue_on_failure: false
