@@ -31,6 +31,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'waypoint_navigator = '
+            'tb3_nav_assessment.waypoint_navigator:main',
         ],
     },
 )
