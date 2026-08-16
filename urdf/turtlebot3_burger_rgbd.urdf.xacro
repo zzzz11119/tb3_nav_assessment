@@ -1,0 +1,219 @@
+<?xml version="1.0"?>
+<!--
+  TurtleBot3 Burger RGB-D extension for ROS 2 Humble + Gazebo Classic.
+
+  The stock Burger URDF supplies the proven base geometry.  This file keeps
+  the camera challenge isolated and adds the Gazebo plugins required when the
+  robot is spawned from robot_description rather than the stock SDF model.
+-->
+<robot name="turtlebot3_burger_rgbd"
+       xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include
+    filename="$(find turtlebot3_gazebo)/urdf/turtlebot3_burger.urdf"/>
+
+  <!-- A compact RGB-D housing mounted above the front of the Burger. -->
+  <joint name="camera_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <origin xyz="0.055 0 0.205" rpy="0 0 0"/>
+  </joint>
+
+  <link name="camera_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.055"/>
+      <inertia ixx="0.000035" ixy="0" ixz="0"
+               iyy="0.000009" iyz="0" izz="0.000040"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.040 0.090 0.030"/>
+      </geometry>
+      <material name="rgbd_camera_blue">
+        <color rgba="0.08 0.22 0.38 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.040 0.090 0.030"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- REP-103 optical frame: z forward, x right, y down. -->
+  <joint name="camera_rgb_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_rgb_frame"/>
+    <origin xyz="0.021 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="camera_rgb_frame"/>
+
+  <joint name="camera_rgb_optical_joint" type="fixed">
+    <parent link="camera_rgb_frame"/>
+    <child link="camera_rgb_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
+  </joint>
+  <link name="camera_rgb_optical_frame"/>
+
+  <!-- Zero-baseline simulated depth frame, colocated with the RGB imager. -->
+  <joint name="camera_depth_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_depth_frame"/>
+    <origin xyz="0.021 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="camera_depth_frame"/>
+
+  <joint name="camera_depth_optical_joint" type="fixed">
+    <parent link="camera_depth_frame"/>
+    <child link="camera_depth_optical_frame"/>
+    <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
+  </joint>
+  <link name="camera_depth_optical_frame"/>
+
+  <!-- Preserve the stock Burger motion and sensor interfaces. -->
+  <gazebo reference="wheel_left_link">
+    <mu1>100000.0</mu1>
+    <mu2>100000.0</mu2>
+    <kp>100000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.01</maxVel>
+  </gazebo>
+  <gazebo reference="wheel_right_link">
+    <mu1>100000.0</mu1>
+    <mu2>100000.0</mu2>
+    <kp>100000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.01</maxVel>
+  </gazebo>
+  <gazebo reference="caster_back_link">
+    <mu1>0.0</mu1>
+    <mu2>0.0</mu2>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="turtlebot3_diff_drive"
+            filename="libgazebo_ros_diff_drive.so">
+      <ros/>
+      <update_rate>30</update_rate>
+      <left_joint>wheel_left_joint</left_joint>
+      <right_joint>wheel_right_joint</right_joint>
+      <wheel_separation>0.160</wheel_separation>
+      <wheel_diameter>0.066</wheel_diameter>
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+      <command_topic>cmd_vel</command_topic>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+    </plugin>
+
+    <plugin name="turtlebot3_joint_state"
+            filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>30</update_rate>
+      <joint_name>wheel_left_joint</joint_name>
+      <joint_name>wheel_right_joint</joint_name>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="imu_link">
+    <sensor name="tb3_imu" type="imu">
+      <always_on>true</always_on>
+      <update_rate>200</update_rate>
+      <plugin name="turtlebot3_imu"
+              filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <remapping>~/out:=imu</remapping>
+        </ros>
+        <frame_name>imu_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="base_scan">
+    <sensor name="hls_lfcd_lds" type="ray">
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1.0</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>6.28</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.12</min>
+          <max>3.5</max>
+          <resolution>0.015</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="turtlebot3_laserscan"
+              filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>base_scan</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="camera_link">
+    <material>Gazebo/Blue</material>
+    <sensor name="rgbd_camera" type="depth">
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>15</update_rate>
+      <pose>0.021 0 0 0 0 0</pose>
+      <camera name="rgbd">
+        <horizontal_fov>1.0471975512</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>B8G8R8</format>
+        </image>
+        <depth_camera/>
+        <clip>
+          <near>0.12</near>
+          <far>5.0</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.002</stddev>
+        </noise>
+      </camera>
+      <plugin name="rgbd_camera_controller"
+              filename="libgazebo_ros_camera.so">
+        <ros>
+          <remapping>camera/image_raw:=camera/color/image_raw</remapping>
+          <remapping>camera/camera_info:=camera/color/camera_info</remapping>
+          <remapping>camera/depth/image_raw:=camera/depth/image_raw</remapping>
+          <remapping>camera/depth/camera_info:=camera/depth/camera_info</remapping>
+          <remapping>camera/points:=camera/depth/points</remapping>
+        </ros>
+        <camera_name>camera</camera_name>
+        <frame_name>camera_rgb_optical_frame</frame_name>
+        <min_depth>0.12</min_depth>
+        <max_depth>5.0</max_depth>
+      </plugin>
+    </sensor>
+  </gazebo>
+</robot>

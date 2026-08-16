@@ -13,6 +13,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
+        (os.path.join('share', package_name, 'urdf'), glob('urdf/*')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*.world')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
         (os.path.join('share', package_name, 'maps'), glob('maps/*')),
@@ -33,6 +34,8 @@ setup(
         'console_scripts': [
             'waypoint_navigator = '
             'tb3_nav_assessment.waypoint_navigator:main',
+            'rgbd_smoke_check = '
+            'tb3_nav_assessment.rgbd_smoke_check:main',
         ],
     },
 )
