@@ -1,4 +1,4 @@
-# Copyright 2026 Assessment Student
+# Copyright 2026 zzr
 # SPDX-License-Identifier: Apache-2.0
 
 """Static acceptance tests for week-one package assets."""

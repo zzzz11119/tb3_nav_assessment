@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2026 Assessment Student
+# Copyright 2026 zzr
 # SPDX-License-Identifier: Apache-2.0
 
 """ROS 2 node for pretrained YOLO detection on the Burger RGB-D stream."""

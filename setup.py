@@ -1,4 +1,4 @@
-# Copyright 2026 Assessment Student
+# Copyright 2026 zzr
 # SPDX-License-Identifier: Apache-2.0
 
 from glob import glob
@@ -48,8 +48,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Assessment Student',
-    maintainer_email='student@example.com',
+    maintainer='zzr',
+    maintainer_email='zzrorczr@tongji.edu.cn',
     description=(
         'TurtleBot3 Burger simulation assets for the stage-one '
         'autonomous-navigation assessment.'
