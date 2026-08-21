@@ -127,5 +127,12 @@ def test_manifest_and_setup_install_rgbd_runtime_requirements():
     } <= dependencies
 
     setup_text = (PACKAGE_ROOT / 'setup.py').read_text(encoding='utf-8')
-    assert "glob('urdf/*')" in setup_text
+    assert (
+        "data_files('urdf/*.xacro')" in setup_text
+        or "glob('urdf/*')" in setup_text
+        or (
+            "package_name, 'urdf'" in setup_text
+            and "glob('urdf/*.xacro')" in setup_text
+        )
+    )
     assert 'rgbd_smoke_check:main' in setup_text

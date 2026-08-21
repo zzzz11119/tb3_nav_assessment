@@ -1,32 +1,47 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
+             schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>tb3_nav_assessment</name>
-  <version>0.0.0</version>
-  <description>TurtleBot3 autonomous navigation assessment for ROS2 Humble.</description>
-  <maintainer email="ZZRorczr@tongji.edu.cn">zz</maintainer>
+  <version>0.1.0</version>
+  <description>
+    Reproducible TurtleBot3 Burger simulation assets for the stage-one
+    autonomous-navigation assessment.
+  </description>
+  <maintainer email="student@example.com">Assessment Student</maintainer>
   <license>Apache-2.0</license>
 
-  <depend>rclpy</depend>
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <exec_depend>action_msgs</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
-  <exec_depend>turtlebot3_gazebo</exec_depend>
-  <exec_depend>slam_toolbox</exec_depend>
-  <exec_depend>cartographer_ros</exec_depend>
-  <exec_depend>turtlebot3_cartographer</exec_depend>
-  <exec_depend>action_msgs</exec_depend>
+  <exec_depend>nav2_bringup</exec_depend>
   <exec_depend>nav2_msgs</exec_depend>
-  <exec_depend>nav2_map_server</exec_depend>
-  <exec_depend>gazebo_plugins</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>rclpy</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>rqt_image_view</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
   <exec_depend>tf2_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>turtlebot3_bringup</exec_depend>
+  <exec_depend>turtlebot3_gazebo</exec_depend>
+  <exec_depend>turtlebot3_navigation2</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
   <exec_depend>xacro</exec_depend>
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
