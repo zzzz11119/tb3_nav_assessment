@@ -1,0 +1,26 @@
+frontier_explorer:
+  ros__parameters:
+    use_sim_time: true
+    map_topic: /map
+    action_name: navigate_to_pose
+    global_frame: map
+    robot_frame: base_footprint
+    planning_period_sec: 2.0
+    initial_wait_sec: 8.0
+    completion_timeout_sec: 15.0
+    max_residual_frontier_cells: 40
+    min_completion_known_area_m2: 80.0
+    stalled_timeout_sec: 90.0
+    goal_timeout_sec: 120.0
+    blacklist_radius_m: 0.55
+    blacklist_expiry_sec: 180.0
+    min_frontier_size: 8
+    min_goal_clearance_m: 0.22
+    min_goal_distance_m: 0.80
+    free_threshold: 20
+    occupied_threshold: 65
+    information_gain_weight: 2.0
+    distance_weight: 1.0
+    max_goals: 100
+    auto_save_map: true
+    map_save_path: ~/.ros/maps/autonomous_exploration

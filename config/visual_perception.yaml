@@ -1,0 +1,16 @@
+yolo_object_detector:
+  ros__parameters:
+    use_sim_time: true
+    model_path: ''
+    input_image_topic: /camera/color/image_raw
+    depth_image_topic: /camera/depth/image_raw
+    annotated_image_topic: /perception/yolo/annotated_image
+    detections_topic: /perception/yolo/detections
+    confidence_threshold: 0.25
+    iou_threshold: 0.45
+    image_size: 640
+    max_detections: 50
+    max_processing_hz: 5.0
+    class_filter: ['*']
+    use_depth: true
+    max_depth_age_sec: 0.5

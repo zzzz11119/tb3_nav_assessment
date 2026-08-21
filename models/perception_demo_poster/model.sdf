@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="perception_demo_poster">
+    <static>true</static>
+    <link name="poster">
+      <pose>0 0 0.52 0 0 0</pose>
+      <collision name="collision">
+        <geometry>
+          <box><size>0.03 0.60 0.80</size></box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <box><size>0.03 0.60 0.80</size></box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://perception_demo_poster/materials/scripts</uri>
+            <uri>model://perception_demo_poster/materials/textures</uri>
+            <name>Perception/DemoPoster</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
