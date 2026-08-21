@@ -1,0 +1,7 @@
+image: autonomous_exploration.pgm
+mode: trinary
+resolution: 0.0500000007
+origin: [-5.94555586, -4.00305882, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.2

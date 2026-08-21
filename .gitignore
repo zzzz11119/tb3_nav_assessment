@@ -17,3 +17,11 @@ __pycache__/
 *.bag
 *.db3
 rosbag2_*/
+
+# Local installer artifacts
+.*_install_backup_*/
+*.zip
+*.enc
+
+# Unused local model variant
+/models/yolo/yolo26n.onnx
