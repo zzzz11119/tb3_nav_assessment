@@ -1,0 +1,10 @@
+<library path="astar_planner">
+  <class
+    name="tb3_astar_planner/AStarPlanner"
+    type="tb3_astar_planner::AStarPlanner"
+    base_class_type="nav2_core::GlobalPlanner">
+    <description>
+      Eight-connected, costmap-aware A* global planner for Nav2 Humble.
+    </description>
+  </class>
+</library>
