@@ -8,7 +8,7 @@
     Costmap-aware A* global planner plugin for the TurtleBot3 optional
     navigation challenge on ROS 2 Humble and Nav2.
   </description>
-  <maintainer email="student@example.com">Assessment Student</maintainer>
+  <maintainer email="zzrorczr@tongji.edu.cn">zzr</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

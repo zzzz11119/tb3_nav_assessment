@@ -1,4 +1,4 @@
-// Copyright 2026 Assessment Student
+// Copyright 2026 zzr
 // SPDX-License-Identifier: Apache-2.0
 
 #ifndef TB3_ASTAR_PLANNER__ASTAR_PLANNER_HPP_

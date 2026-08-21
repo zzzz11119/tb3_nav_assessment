@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2026 Assessment Student
+# Copyright 2026 zzr
 # SPDX-License-Identifier: Apache-2.0
 
 """Verify the minimum ROS graph required by the week-one simulation."""

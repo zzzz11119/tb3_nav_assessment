@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2026 Assessment Student
+# Copyright 2026 zzr
 # SPDX-License-Identifier: Apache-2.0
 
 """Run Gazebo, SLAM Toolbox, Nav2 and frontier exploration together."""
