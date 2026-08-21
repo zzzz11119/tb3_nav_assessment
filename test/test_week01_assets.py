@@ -136,3 +136,15 @@ def test_setup_registers_waypoint_navigator_console_script():
     setup_text = (PACKAGE_ROOT / 'setup.py').read_text(encoding='utf-8')
     assert 'waypoint_navigator = ' in setup_text
     assert 'tb3_nav_assessment.waypoint_navigator:main' in setup_text
+
+
+def test_readme_documents_core_navigation_and_waypoint_run():
+    readme_text = (PACKAGE_ROOT / 'README.md').read_text(encoding='utf-8')
+    for expected_text in (
+        'nav2_bringup bringup_launch.py',
+        'nav2_bringup rviz_launch.py',
+        'ros2 run tb3_nav_assessment waypoint_navigator',
+        'config/waypoints.yaml',
+        '2D Pose Estimate',
+    ):
+        assert expected_text in readme_text
