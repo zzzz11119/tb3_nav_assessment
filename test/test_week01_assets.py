@@ -130,3 +130,9 @@ def test_setup_installs_all_required_resource_directories():
         'docs/**/*.md',
     ):
         assert pattern in setup_text
+
+
+def test_setup_registers_waypoint_navigator_console_script():
+    setup_text = (PACKAGE_ROOT / 'setup.py').read_text(encoding='utf-8')
+    assert 'waypoint_navigator = ' in setup_text
+    assert 'tb3_nav_assessment.waypoint_navigator:main' in setup_text
