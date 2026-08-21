@@ -38,6 +38,7 @@ setup(
         *data_files('maps/*'),
         *data_files('rviz/*.rviz'),
         *data_files('docs/*.md'),
+        *data_files('docs/**/*.md'),
         *data_files('models/*.md'),
         *data_files('models/yolo/*.onnx'),
         *data_files('models/*/*.config'),
