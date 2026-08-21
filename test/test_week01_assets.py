@@ -127,5 +127,6 @@ def test_setup_installs_all_required_resource_directories():
         'maps/*',
         'rviz/*.rviz',
         'docs/*.md',
+        'docs/**/*.md',
     ):
         assert pattern in setup_text

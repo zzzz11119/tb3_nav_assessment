@@ -4,7 +4,7 @@
 
 ## 已有远程基线
 
-- 仓库：`zzzz11119/tb3_nav_assessment`（private）
+- 仓库：`zzzz11119/tb3_nav_assessment`（开发期间为 private，提交后已 public）
 - 基线分支：`main`
 - 本轮整理前远程 HEAD：`b0add3a`
 - 已包含：自建 Gazebo world、SLAM 对比、Nav2 单目标/多目标和
@@ -28,7 +28,8 @@
   `bus` / `person`，自动验收 PASS。
 - 前沿探索：25 个目标，成功 22、失败 3，地图 YAML/PGM 自动保存，
   最终完成态验收 PASS。
-- 当前工作区 Python 静态/单元测试：`28 passed`。
+- Ubuntu 主 package 静态/单元测试：`30 passed, 1 skipped`。
+- Nav2 A* package 静态测试：`6 passed`。
 
 ## 明确不提交
 

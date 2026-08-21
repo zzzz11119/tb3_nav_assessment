@@ -39,7 +39,7 @@ colcon、Gazebo，因此尚需在 Ubuntu ROS2 Humble 主机上执行：
 
 ### 下一步
 
-在 Ubuntu 主机按 README 第 1—5 节运行，保存版本、topic、TF、world 全景和
+在 Ubuntu 主机按根目录 README 的构建、快速运行和自动验证章节执行，保存版本、topic、TF、world 全景和
 检查日志；若中央门或出生点存在物理问题，只调整 world 坐标后重新验收。
 
 ## 2026-08-13｜附加挑战一 RGB-D 相机工程实现
@@ -181,11 +181,11 @@ Ubuntu 虚拟机安装 PyTorch 和现场下载权重，将官方 COCO 预训练 
 
 ### 证据
 
-- `docs/evidence/ubuntu_static_tests_pass_2026-08-20.png`
-- `docs/evidence/ubuntu_original_mode_spawn_pass_2026-08-20.png`
-- `docs/evidence/ubuntu_original_mode_topic_pass_2026-08-20.png`
-- `docs/evidence/ubuntu_yolov5_rgbd_detection_2026-08-20.png`
-- `docs/evidence/ubuntu_perception_smoke_pass_2026-08-20.png`
+- `docs/evidence/tests/ubuntu_static_tests_pass_2026-08-20.png`
+- `docs/evidence/perception/ubuntu_original_mode_spawn_pass_2026-08-20.png`
+- `docs/evidence/perception/ubuntu_original_mode_topic_pass_2026-08-20.png`
+- `docs/evidence/perception/ubuntu_yolov5_rgbd_detection_2026-08-20.png`
+- `docs/evidence/perception/ubuntu_perception_smoke_pass_2026-08-20.png`
 
 ## 2026-08-20｜附加挑战四前沿自主探索实现
 

@@ -1,306 +1,135 @@
 # TurtleBot3 第一阶段自主导航考核
 
-本 package 固定使用 **Ubuntu 22.04 + ROS2 Humble + Gazebo Classic +
-TurtleBot3 Burger**。Gazebo 自建 world、传感器验证、仿真 launch 和自动冒烟
-检查已经完成。当前主线为 SLAM Toolbox 建图、Cartographer 对比、Nav2 与
-Python 多目标导航。
+基于 **Ubuntu 22.04、ROS 2 Humble、Gazebo Classic 和 TurtleBot3
+Burger** 的自主导航考核项目。仓库包含自建仿真场景、SLAM/Nav2 基线以及
+四项附加挑战，并提供可重复执行的静态测试、运行态检查和 Ubuntu 验收证据。
 
-附加挑战一已按“独立入口、不改基础仿真”的原则加入：自定义 Burger RGB-D
-URDF/Xacro、独立 Gazebo launch、RGB/深度/点云接口和自动验收节点。现场步骤见
-[rgbd_camera_challenge.md](docs/rgbd_camera_challenge.md)。
+## 项目状态
 
-附加挑战二因为使用 C++ / `pluginlib` 实现，保持为独立 package，
-源码一并归档在
-[`optional_challenges/tb3_astar_planner`](optional_challenges/tb3_astar_planner/README.md)
-中。它只在专用启动入口中
-将 A* 注入 Nav2，不修改本 package 的稳定仿真入口。
+| 模块 | 状态 | 入口 |
+|---|---|---|
+| 自建 Gazebo 世界与传感器基线 | 已通过 | `simulation.launch.py` |
+| 附加挑战一：RGB-D 相机 | 已通过 | `rgbd_simulation.launch.py` |
+| 附加挑战二：Nav2 A* 规划器 | 已通过 | `tb3_astar_planner` |
+| 附加挑战三：YOLOv5n 目标检测 | 已通过 | `visual_perception.launch.py` |
+| 附加挑战四：自主前沿探索 | 已通过 | `autonomous_exploration.launch.py` |
 
-附加挑战三复用 RGB-D 相机，以独立
-`visual_perception.launch.py` 启动 COCO 预训练 YOLOv5n ONNX 检测。
-新入口同时提供 `mode:=original` 和 `mode:=detection`，原图像 topic
-不会被覆盖。完整说明见
-[visual_perception_challenge.md](docs/visual_perception_challenge.md)。
+自主探索现场结果：机器人穿过中央通道并完成全局探索，发送/成功/失败目标数为
+`25/22/3`，地图自动保存，最终运行态检查通过。
 
-附加挑战四使用独立 `autonomous_exploration.launch.py` 串联原始自建 world、
-SLAM Toolbox、Nav2 与自研 frontier-based 探索节点。它会自动选择安全可达
-前沿、处理失败目标、发布状态/可视化，并在无前沿稳定后保存最终地图。完整说明见
-[autonomous_exploration_challenge.md](docs/autonomous_exploration_challenge.md)。
+## 仓库结构
 
-SLAM 对比实验的场景梯度、公平输入、评价指标和停止条件见
-[slam_benchmark_plan.md](docs/slam_benchmark_plan.md)。研究配置必须与最终考核
-配置分离，不能为了增加算法数量破坏稳定演示。
+```text
+config/                 ROS 2、SLAM、探索与感知参数
+docs/                   按挑战、设计、验收和项目记录分类的文档
+launch/                 基础仿真及各附加挑战启动入口
+maps/                   最终地图、探索地图和 SLAM 对比地图
+models/                 YOLOv5n ONNX 与离线演示模型
+optional_challenges/    独立的 Nav2 A* C++ 插件 package
+tb3_nav_assessment/     Python 节点和前沿算法
+test/                   主 package 静态验收测试
+urdf/                   TurtleBot3 Burger RGB-D Xacro
+worlds/                 自建 Gazebo 世界
+```
 
-## 第 1 周当前交付
+完整文档导航见 [`docs/README.md`](docs/README.md)，地图用途见
+[`maps/README.md`](maps/README.md)。
 
-- 12 m × 8 m 封闭世界和完整碰撞边界
-- 西、东两个连通区域，中间门宽 2.4 m
-- 3 个不同形状/尺寸的静态障碍物
-- TurtleBot3 Burger 出生点 `(-4.0, -2.5)`
-- 不依赖本机绝对路径的 `simulation.launch.py`
-- `/scan`、`/odom`、`/clock`、TF 与 LaserScan 频率检查节点
-- world/package 静态验收测试
-- 实验日志、验收记录和证据清单
+## 环境要求
 
-## 1. 环境基线
+- Ubuntu 22.04
+- ROS 2 Humble
+- Gazebo Classic 11
+- TurtleBot3 Burger
+- Python 3.10
+
+每个终端先加载环境：
 
 ```bash
 source /opt/ros/humble/setup.bash
+source ~/turtlebot3_ws/install/setup.bash
 export TURTLEBOT3_MODEL=burger
-
-ros2 pkg prefix gazebo_ros
-ros2 pkg prefix turtlebot3_gazebo
-ros2 pkg prefix turtlebot3_bringup
-ros2 pkg prefix turtlebot3_teleop
 ```
 
-若 TurtleBot3 仿真 package 不存在，按 ROBOTIS Humble 官方分支安装：
+## 构建
+
+在仓库根目录执行：
 
 ```bash
-mkdir -p ~/turtlebot3_ws/src
-cd ~/turtlebot3_ws/src
-git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
-cd ~/turtlebot3_ws
-rosdep install --from-paths src --ignore-src -r -y
-colcon build --symlink-install
+rosdep install --from-paths . --ignore-src -r -y
+colcon build --symlink-install --base-paths .
 source install/setup.bash
 ```
 
-每个新终端都要 source ROS2 和 TurtleBot3 overlay。
+若 TurtleBot3 仿真 package 尚未安装，请先按 ROBOTIS 的 Humble 分支准备
+`~/turtlebot3_ws`。
 
-## 2. 先验收官方 empty world
+## 快速运行
 
-```bash
-source /opt/ros/humble/setup.bash
-source ~/turtlebot3_ws/install/setup.bash
-export TURTLEBOT3_MODEL=burger
-ros2 launch turtlebot3_gazebo empty_world.launch.py
-```
-
-另开终端检查：
+基础自建世界：
 
 ```bash
-source /opt/ros/humble/setup.bash
-source ~/turtlebot3_ws/install/setup.bash
-export TURTLEBOT3_MODEL=burger
-ros2 topic list | grep -E '^/(scan|odom|tf|tf_static|clock)$'
-ros2 topic hz /scan
-```
-
-再开一个终端启动键盘控制，持续运行并移动机器人至少 10 分钟：
-
-```bash
-source /opt/ros/humble/setup.bash
-source ~/turtlebot3_ws/install/setup.bash
-export TURTLEBOT3_MODEL=burger
-ros2 run turtlebot3_teleop teleop_keyboard
-```
-
-只有机器人可移动、5 个关键 topic 正常且 Gazebo 无持续报错，才在验收记录中
-将官方基线标记为通过。
-
-## 3. 构建本项目
-
-在本仓库根目录运行：
-
-```bash
-source /opt/ros/humble/setup.bash
-source ~/turtlebot3_ws/install/setup.bash
-export TURTLEBOT3_MODEL=burger
-
-rosdep install \
-  --from-paths . \
-  --ignore-src -r -y
-colcon build \
-  --symlink-install \
-  --base-paths .
-source install/setup.bash
-```
-
-冷启动复现时，先删除仓库根目录的 `build/`、`install/`、`log/`，再执行上述
-构建命令。这三个目录已被仓库根目录的 `.gitignore` 排除。
-
-## 4. 启动自建世界
-
-```bash
-source /opt/ros/humble/setup.bash
-source ~/turtlebot3_ws/install/setup.bash
-source install/setup.bash
-export TURTLEBOT3_MODEL=burger
-
 ros2 launch tb3_nav_assessment simulation.launch.py
 ```
 
-无图形界面启动：
-
-```bash
-ros2 launch tb3_nav_assessment simulation.launch.py gui:=false
-```
-
-查看机器人与 LaserScan：
-
-```bash
-ros2 launch turtlebot3_bringup rviz2.launch.py
-```
-
-键盘遍历两个区域：
-
-```bash
-ros2 run turtlebot3_teleop teleop_keyboard
-```
-
-## 5. 自动验证传感器和 TF
-
-保持仿真运行，在已 source 项目 overlay 的新终端执行：
-
-```bash
-ros2 run tb3_nav_assessment simulation_smoke_check \
-  --ros-args -p timeout_sec:=12.0 -p min_scan_hz:=3.0
-```
-
-检查通过必须同时满足：
-
-- `/scan` 有有限距离数据且频率不低于配置阈值
-- `/odom`、`/clock` 持续发布
-- `/tf`、`/tf_static` 有变换
-- `odom → base_footprint → base_scan` 可查询
-
-命令退出码为 `0` 才算通过；失败时会逐项显示缺失内容。
-
-## 6. 静态测试
-
-不启动 ROS2 也可检查 package 和 world 的结构：
-
-```bash
-python3 -m pytest projects/tb3_nav_assessment/test -q
-```
-
-测试会验证封闭外墙、两个区域、门宽、3 个不同障碍物、碰撞/可视几何、
-Python 语法以及安装资源规则。
-
-## 7. World 布局
-
-| 元素 | 中心/范围（m） | 尺寸（m） |
-|---|---|---|
-| 外边界 | `x=[-6, 6]`, `y=[-4, 4]` | `12 × 8` |
-| 中间隔墙 | `x=0`，上下两段 | 中央门宽 `2.4` |
-| 小立方体 | `(-3.2, 2.2)` | `0.6 × 0.6 × 0.6` |
-| 长方体 | `(3.1, 2.2)` | `1.2 × 0.7 × 0.8` |
-| 圆柱体 | `(3.2, -2.2)` | 半径 `0.45`，高 `0.7` |
-| Burger 出生点 | `(-4.0, -2.5)` | launch 参数可覆盖 |
-
-## 8. 第 1 周验收与证据
-
-按 [week01_acceptance.md](docs/week01_acceptance.md) 逐项执行。证据文件统一放入
-本 package 的现场截图位于 `docs/evidence/`，不要提交大型 rosbag
-数据库。
-
-常见问题：
-
-- `TURTLEBOT3_MODEL` 不是 `burger`：重新 export 后启动。
-- 找不到 package：检查三个 setup 文件是否都已 source。
-- `/clock` 不动：确认 Gazebo 没暂停，并检查 `use_sim_time:=true`。
-- TF 缺失：先检查 `robot_state_publisher` 是否启动，再检查 Gazebo 插件日志。
-- 机器人出生后弹飞/穿模：确认没有修改默认出生点到墙体或障碍物内部。
-
-## 9. 附加挑战一：自定义 RGB-D 相机
-
-该入口不会生成原始 SDF Burger，而是用自定义 Xacro 构造
-`robot_description`，因此不要与 `simulation.launch.py` 同时启动：
+RGB-D 相机：
 
 ```bash
 ros2 launch tb3_nav_assessment rgbd_simulation.launch.py
 ```
 
-保持仿真运行，在另一个已 source 的终端自动检查 RGB、深度、相机内参、点云
-和相机 TF：
-
-```bash
-ros2 run tb3_nav_assessment rgbd_smoke_check \
-  --ros-args -p timeout_sec:=15.0 -p min_image_hz:=5.0
-```
-
-期望看到以下接口：
-
-- `/camera/color/image_raw`
-- `/camera/color/camera_info`
-- `/camera/depth/image_raw`
-- `/camera/depth/camera_info`
-- `/camera/depth/points`
-
-终端打印 `RGB-D OPTIONAL CHALLENGE CHECK: PASS` 且退出码为 `0` 才算现场
-验收完成。完整参数、RViz 检查方法和证据清单见附加挑战文档。
-
-## 10. 附加挑战二：Nav2 自定义 A* 规划器
-
-A* 以独立 ROS 2 package 归档。克隆本仓库后，先将它复制到 workspace
-的同级 `src` 目录：
-
-```bash
-cp -r optional_challenges/tb3_astar_planner \
-  ~/assessment_nav_ws/src/tb3_astar_planner
-cd ~/assessment_nav_ws
-colcon build --packages-select tb3_astar_planner
-```
-
-插件实现、Nav2 注入方式和现场验收数据见
-[`astar_planner_challenge.md`](optional_challenges/tb3_astar_planner/docs/astar_planner_challenge.md)。
-
-## 11. 附加挑战三：预训练目标检测
-
-原 RGB-D 模式：
-
-```bash
-ros2 launch tb3_nav_assessment visual_perception.launch.py mode:=original
-```
-
-检测模式和结果窗口：
+YOLOv5n 检测：
 
 ```bash
 ros2 launch tb3_nav_assessment visual_perception.launch.py \
   mode:=detection show_result:=true
 ```
 
-运行态自动验收：
-
-```bash
-ros2 run tb3_nav_assessment perception_smoke_check \
-  --ros-args -p timeout_sec:=20.0 -p require_detection:=true
-```
-
-检测节点保留 `/camera/color/image_raw`，另外发布
-`/perception/yolo/annotated_image` 和 `/perception/yolo/detections`。
-默认的离线海报演示使验收不依赖现场网络；检测实际物体时加
-`demo_target:=false`。
-
-## 12. 附加挑战四：自主环境探索
-
-一键启动自建 world、在线 SLAM、无 AMCL 的 Nav2 导航和前沿探索：
+自主前沿探索：
 
 ```bash
 ros2 launch tb3_nav_assessment autonomous_exploration.launch.py \
   map_save_path:=$HOME/assessment_nav_ws/maps/autonomous_exploration
 ```
 
-运行中健康检查：
+VirtualBox 图形性能不足时，可在探索命令中加入 `gui:=false rviz:=false`。
+
+## 自动验证
+
+主 package 静态测试：
 
 ```bash
-ros2 run tb3_nav_assessment exploration_smoke_check --ros-args \
-  -p timeout_sec:=60.0 -p require_complete:=false
+python3 -m pytest test -q
 ```
 
-完成态验收会等待无前沿状态，并检查成功目标数和自动保存的地图：
+A* package 静态测试：
 
 ```bash
-ros2 run tb3_nav_assessment exploration_smoke_check --ros-args \
-  -p timeout_sec:=900.0 -p require_complete:=true \
-  -p min_known_area_m2:=60.0 -p min_successful_goals:=2
+python3 -m pytest \
+  optional_challenges/tb3_astar_planner/test -q
 ```
 
-算法只把已知自由栅格作为 Nav2 目标和路径区域，不会让规划器穿越未知区。
-`/exploration/frontiers` 可在 RViz 显示前沿与候选目标，
-`/exploration/status` 输出目标统计、地图面积、完成原因和保存路径。
+运行态检查：
 
-Ubuntu 22.04 / ROS 2 Humble 现场验收已通过：机器人自主穿过中部
-通道并浏览全局，最终目标统计为 25/22/3（发送/成功/失败），
-完成地图 YAML/PGM 自动保存，最终 `exploration_smoke_check` PASS。
-证据位于 `docs/evidence/autonomous_exploration/`。
+```bash
+ros2 run tb3_nav_assessment simulation_smoke_check
+ros2 run tb3_nav_assessment rgbd_smoke_check
+ros2 run tb3_nav_assessment perception_smoke_check
+ros2 run tb3_nav_assessment exploration_smoke_check
+```
+
+Ubuntu 最终验收记录为主 package `30 passed, 1 skipped`，A* package
+`6 passed`。现场截图按模块收录在
+[`docs/evidence/`](docs/evidence/README.md)。
+
+## 附加挑战文档
+
+1. [自定义 RGB-D 相机](docs/challenges/rgbd_camera_challenge.md)
+2. [Nav2 A* 全局规划器](optional_challenges/tb3_astar_planner/docs/astar_planner_challenge.md)
+3. [YOLOv5n 视觉感知](docs/challenges/visual_perception_challenge.md)
+4. [SLAM + Nav2 自主探索](docs/challenges/autonomous_exploration_challenge.md)
+
+## 许可证
+
+项目代码使用 Apache-2.0。第三方模型和演示素材说明见
+[`models/THIRD_PARTY_NOTICES.md`](models/THIRD_PARTY_NOTICES.md)。
