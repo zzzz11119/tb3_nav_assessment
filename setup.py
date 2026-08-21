@@ -58,6 +58,10 @@ setup(
     entry_points={
         'console_scripts': [
             (
+                'waypoint_navigator = '
+                'tb3_nav_assessment.waypoint_navigator:main'
+            ),
+            (
                 'simulation_smoke_check = '
                 'tb3_nav_assessment.simulation_smoke_check:main'
             ),
