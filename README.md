@@ -66,11 +66,52 @@ source install/setup.bash
 
 ## 快速运行
 
-基础自建世界：
+### 基础 Nav2 与三目标点导航
+
+终端 1 启动基础自建世界：
 
 ```bash
 ros2 launch tb3_nav_assessment simulation.launch.py
 ```
+
+终端 2 定位项目安装目录并启动 Nav2：
+
+```bash
+export ASSESSMENT_SHARE=$(ros2 pkg prefix tb3_nav_assessment)/share/tb3_nav_assessment
+```
+
+```bash
+ros2 launch nav2_bringup bringup_launch.py \
+  use_sim_time:=true \
+  use_composition:=false \
+  map:=$ASSESSMENT_SHARE/maps/assessment_map.yaml \
+  params_file:=$ASSESSMENT_SHARE/config/nav2_params.yaml
+```
+
+终端 3 启动 RViz：
+
+```bash
+ros2 launch nav2_bringup rviz_launch.py
+```
+
+在 RViz 中使用 **2D Pose Estimate**，将机器人初始位置设置到 Gazebo
+中的实际出生点；确认激光点云与地图轮廓重合后，再启动自动目标序列。
+
+终端 4 运行三目标点导航节点：
+
+```bash
+export ASSESSMENT_SHARE=$(ros2 pkg prefix tb3_nav_assessment)/share/tb3_nav_assessment
+```
+
+```bash
+ros2 run tb3_nav_assessment waypoint_navigator \
+  --ros-args \
+  --params-file $ASSESSMENT_SHARE/config/waypoints.yaml
+```
+
+节点会依次读取 `point_a`、`point_b` 和 `point_c`，输出目标发送、导航反馈、
+到达状态和最终成功/失败汇总。坐标与失败处理策略可在
+[`config/waypoints.yaml`](config/waypoints.yaml) 中调整。
 
 RGB-D 相机：
 
